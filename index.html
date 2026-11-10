@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="monetag" content="176709aff188f96b81a1f4f487699ba2">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Campeón Intelectual - El Capibara Explorador</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+    body { font-family: 'Fredoka', 'Nunito', sans-serif; overflow: hidden; background: #e8f5e9; }
+    @keyframes bounceShort { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    .animate-bounce-short { animation: bounceShort 1.2s infinite ease-in-out; }
+    @keyframes pulseGlow { 0%, 100% { filter: drop-shadow(0 0 4px rgba(255,213,79,0.8)); } 50% { filter: drop-shadow(0 0 10px rgba(255,193,7,1)); } }
+    .capy-glow { animation: pulseGlow 1.8s infinite ease-in-out; }
+    .balloon { position: absolute; bottom: -100px; animation: floatUp 3.5s linear forwards; }
+    @keyframes floatUp { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; } }
+  </style>
+</head>
+<body class="h-screen w-screen flex flex-col justify-between p-1.5 sm:p-3 select-none">
+  
+<!-- VENTANA DE BIENVENIDA INICIAL -->
+  <div id="capi-intro-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; justify-content: center; align-items: center; font-family: 'Fredoka', sans-serif;">
+    <div style="background: linear-gradient(135deg, #1b4d3e, #2e8b57); color: white; padding: 30px; border-radius: 20px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+      <h2 style="color: #ff4757; margin-bottom: 15px; font-size: 24px;">¡Hola, ¿cómo estás?!</h2>
+      <p style="font-size: 16px; line-height: 1.5; margin-bottom: 25px;">
+        Bienvenido a <b>Campeón Intelectual</b> con Capi el Explorador. Prepárate para recorrer los distritos de Ucayali, el Perú y el mundo respondiendo preguntas y acumulando puntos.
+      </p>
+      <button onclick="cerrarIntroCapi()" style="background: #74115f; color: white; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+        ¡Comenzar a Jugar!
+      </button>
+    </div>
+  </div>
+
+  <!-- CABECERA DE NAVEGACIÓN, MONEDAS Y MÚSICA -->
+  <header class="bg-emerald-700 text-white rounded-2xl px-3 py-1.5 shadow-md flex items-center justify-between shrink-0 border-2 border-emerald-500">
+    <div class="flex items-center gap-2">
+      <span class="text-2xl animate-bounce-short">🦫</span>
+      <div>
+        <h1 class="text-sm sm:text-base font-black tracking-wide leading-none text-amber-300">CAMPEÓN INTELECTUAL</h1>
+        <p class="text-[10px] text-emerald-100 font-semibold leading-tight">Ucayali (17 Distritos) ➔ Perú (25 Regiones) ➔ El Mundo</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <!-- Botón de música temática -->
+      <button onclick="toggleMusic()" id="music-btn" class="bg-emerald-800 border border-amber-300 text-amber-300 px-2 py-1 rounded-full text-xs font-black flex items-center gap-1 shadow-inner">
+        <span id="music-icon">🎵</span>
+        <span id="music-text" class="text-[10px]">Música OFF</span>
+      </button>
+      <div class="bg-emerald-950/60 border border-amber-400/60 px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-inner">
+        <span class="text-sm">🪙</span>
+        <span id="coin-counter" class="text-xs sm:text-sm font-black text-amber-300">100</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SECCIÓN DE APOYO AL CREADOR: YAPE DIRECTO -->
+  <div style="background-color: #d97706; color: white; padding: 8px; text-align: center; border-radius: 12px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; padding-left: 16px; padding-right: 16px; shrink-0;">
+    <span style="font-size: 14px; font-weight: 600;">☕ ¿Te gusta el juego? Apoya al creador:</span>
+    <button onclick="mostrarYape()" style="background-color: white; color: #b45309; font-weight: bold; padding: 6px 12px; border-radius: 8px; font-size: 12px; border: none; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+      💜 Yape al Creador
+    </button>
+  </div>
+
+  <!-- BARRAS DE NECESIDADES DEL CAPIBARA -->
+  <section class="bg-amber-100/90 border-2 border-amber-300 rounded-2xl p-1.5 my-1 shadow-xs flex items-center justify-around gap-1 text-[10px] font-black shrink-0">
+    <div class="flex flex-col items-center flex-1">
+      <span class="flex items-center gap-0.5 text-amber-900">🍌 Hambre</span>
+      <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden border border-amber-400">
+        <div id="bar-hunger" class="bg-orange-500 h-full transition-all duration-300" style="width: 80%;"></div>
+      </div>
+    </div>
+    <div class="flex flex-col items-center flex-1">
+      <span class="flex items-center gap-0.5 text-cyan-900">🥥 Sed</span>
+      <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden border border-cyan-400">
+        <div id="bar-thirst" class="bg-cyan-500 h-full transition-all duration-300" style="width: 80%;"></div>
+      </div>
+    </div>
+    <div class="flex flex-col items-center flex-1">
+      <span class="flex items-center gap-0.5 text-blue-900">🧥 Frío</span>
+      <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden border border-blue-400">
+        <div id="bar-cold" class="bg-blue-500 h-full transition-all duration-300" style="width: 100%;"></div>
+      </div>
+    </div>
+    <div class="flex flex-col items-center flex-1">
+      <span class="flex items-center gap-0.5 text-rose-900">🪭 Calor</span>
+      <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden border border-rose-400">
+        <div id="bar-heat" class="bg-rose-500 h-full transition-all duration-300" style="width: 100%;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENEDOR PRINCIPAL DE PANTALLAS -->
+  <main id="app-content" class="flex-1 my-1.5 min-h-0 overflow-hidden relative rounded-2xl border-2 border-emerald-600/30 shadow-inner">
+  </main>
+
+  <!-- NAVEGACIÓN INFERIOR -->
+  <nav class="bg-white/95 backdrop-blur-md border-2 border-emerald-600/40 rounded-2xl p-1 shadow-lg flex items-center justify-around shrink-0">
+    <button onclick="switchTab('map')" id="nav-map" class="flex-1 py-1.5 rounded-xl font-black text-xs flex flex-col items-center gap-0.5 transition bg-emerald-600 text-white shadow-xs">
+      <span class="text-base">🗺️</span>
+      <span>Circuito</span>
+    </button>
+    <button onclick="switchTab('trivia')" id="nav-trivia" class="flex-1 py-1.5 rounded-xl font-black text-xs flex flex-col items-center gap-0.5 transition text-emerald-900 hover:bg-emerald-100">
+      <span class="text-base">🎮</span>
+      <span>Jugar</span>
+    </button>
+    <button onclick="switchTab('shop')" id="nav-shop" class="flex-1 py-1.5 rounded-xl font-black text-xs flex flex-col items-center gap-0.5 transition text-emerald-900 hover:bg-emerald-100">
+      <span class="text-base">🛍️</span>
+      <span>Tienda</span>
+    </button>
+  </nav>
+
+  <!-- EFECTOS Y MODALES -->
+  <div id="balloon-container" class="fixed inset-0 pointer-events-none z-50 overflow-hidden"></div>
+
+  <div id="like-popup" class="fixed inset-0 pointer-events-none z-50 flex items-center justify-center hidden">
+    <div class="bg-amber-400/95 text-emerald-950 font-black px-6 py-4 rounded-3xl border-4 border-white shadow-2xl text-center flex flex-col items-center gap-1">
+      <div class="text-6xl">👍🦫</div>
+      <div id="like-text" class="text-base font-black uppercase tracking-wide">¡EXCELENTE!</div>
+    </div>
+  </div>
+
+  <div id="victory-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-3xl border-4 border-amber-400 p-4 max-w-sm w-full text-center shadow-2xl flex flex-col items-center gap-2">
+      <div class="text-5xl">🏆🎈🥳</div>
+      <h2 id="victory-title" class="text-lg font-black text-amber-600 leading-tight">¡CAMPEÓN INTELECTUAL!</h2>
+      <p id="victory-msg" class="text-xs font-bold text-slate-700 leading-relaxed">
+        ¡Has dominado esta región! Prepárate para conquistar el siguiente nivel del mundo.
+      </p>
+      <button onclick="closeVictoryModal()" class="w-full mt-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black py-2.5 rounded-2xl shadow-lg text-sm flex items-center justify-center gap-2">
+        <span>¡AVANZAR AL SIGUIENTE CIRCUITO!</span>
+        <span>🚀</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      coins: 100,
+      activeRegion: 'ucayali',
+      currentStageIndex: 0,
+      currentQuestionIndex: 0,
+      shuffledOptions: [],
+      currentOutfit: 'default',
+      isMusicPlaying: false,
+      musicTimer: null,
+      audioCtx: null,
+      needs: { hunger: 80, thirst: 80, cold: 100, heat: 100 },
+      outfits: {
+        default: { name: 'Explorador Basic', icon: '🦫', price: 0, type: 'outfit', unlocked: true },
+        ashaninka: { name: 'Traje Asháninka 🌿', icon: '👑', price: 50, type: 'outfit', unlocked: false },
+        andino: { name: 'Poncho Andino 🇵🇪', icon: '🧢', price: 60, type: 'cold', unlocked: false },
+        astronauta: { name: 'Astronauta 🚀', icon: '👨‍🚀', price: 150, type: 'outfit', unlocked: false }
+      },
+      shopItems: [
+        { id: 'juane', name: 'Juane de Gallina 🍃', icon: '🫔', price: 15, stat: 'hunger', amount: 35, msg: '¡Rico Juane para Capi!' },
+        { id: 'tacacho', name: 'Tacacho con Cecina 🍌', icon: '🍌', price: 20, stat: 'hunger', amount: 45, msg: '¡Energía amazónica!' },
+        { id: 'agua_coco', name: 'Agua de Coco Helada 🥥', icon: '🥥', price: 10, stat: 'thirst', amount: 30, msg: '¡Capi sin sed!' },
+        { id: 'chapo', name: 'Chicha de Chapo 🥤', icon: '🥤', price: 12, stat: 'thirst', amount: 40, msg: '¡Refrescante Chapo!' },
+        { id: 'abanico', name: 'Abanico Amazónico 🪭', icon: '🪭', price: 25, stat: 'heat', amount: 50, msg: '¡Capi se refresca!' },
+        { id: 'poncho', name: 'Abrigo de Lana 🧥', icon: '🧥', price: 40, stat: 'cold', amount: 50, msg: '¡Capi bien abrigado!' }
+      ],
+      circuits: {
+        ucayali: [
+          { name: 'Callería', prov: 'Coronel Portillo', icon: '🏙️', q: [
+            { q: '¿Cuál es la capital administrativa de Coronel Portillo y Ucayali?', a: 'Pucallpa', alt: ['Iquitos', 'Tarapoto', 'Tingo María'] },
+            { q: '¿Qué importante puerto sobre el río Ucayali se encuentra en Callería?', a: 'Puerto de Pucallpa', alt: ['Yurimaguas', 'Puerto Maldonado', 'Callao'] },
+            { q: '¿En qué mes se celebra el Aniversario de Pucallpa?', a: 'Octubre', alt: ['Junio', 'Julio', 'Diciembre'] },
+            { q: '¿Qué festividad patronal se celebra cada junio en la selva?', a: 'Fiesta de San Juan', alt: ['Inti Raymi', 'Virgen del Carmen', 'Carnaval'] },
+            { q: '¿Qué plato envuelto en hojas de bijao es ícono de Callería?', a: 'El Juane', alt: ['Ceviche', 'Lomo Saltado', 'Pachamanca'] }
+          ]},
+          { name: 'Yarinacocha', prov: 'Coronel Portillo', icon: '🌊', q: [
+            { q: '¿Cuál es el principal atractivo turístico natural de Yarinacocha?', a: 'Laguna de Yarinacocha', alt: ['Laguna Azul', 'Huacachina', 'Paca'] },
+            { q: '¿Qué pueblo originario habita ancestralmente en Yarinacocha?', a: 'Shipibo-Konibo', alt: ['Asháninka', 'Awajún', 'Quechua'] },
+            { q: '¿Qué arte tradicional geométrico elaboran las artesanas?', a: 'Diseño Kené', alt: ['Retablos', 'Chulucanas', 'Moche'] },
+            { q: '¿Qué comunidad nativa turística es ícono en Yarinacocha?', a: 'San Francisco', alt: ['Chinchero', 'Koshinanty', 'Otavalo'] },
+            { q: '¿Qué plato frito o sazonado a la hoja es clásico en su malecón?', a: 'Doncella / Patarashca', alt: ['Trucha', 'Pejerrey', 'Chicharrón'] }
+          ]},
+          { name: 'Manantay', prov: 'Coronel Portillo', icon: '⛵', q: [
+            { q: '¿De qué distrito tradicional se desmembró Manantay en 2006?', a: 'Callería', alt: ['Yarinacocha', 'Campoverde', 'Iparía'] },
+            { q: '¿Qué puerto fluvial y sector maderero destaca en Manantay?', a: 'Puerto Chiclete', alt: ['Puerto Ene', 'Callao', 'Paita'] },
+            { q: '¿Qué importante río bordea el sector de Manantay?', a: 'Río Ucayali', alt: ['Río Urubamba', 'Río Huallaga', 'Río Rímac'] },
+            { q: '¿Qué fruto nativo amazónico muy nutritivo abunda en los mercados de Manantay?', a: 'Camu Camu', alt: ['Manzana', 'Fresa', 'Uva'] },
+            { q: '¿Qué bebida tradicional helada se elabora a base de plátano maduro en Manantay?', a: 'Chapo', alt: ['Chicha Morada', 'Emoliente', 'Limonada'] }
+          ]},
+          { name: 'Campoverde', prov: 'Coronel Portillo', icon: '🌾', q: [
+            { q: '¿Qué actividad económica destaca en el distrito de Campoverde?', a: 'Agricultura y Ganadería', alt: ['Minería Marina', 'Industria Textil', 'Pesca Marítima'] },
+            { q: '¿Qué importante vía conecta Campoverde con Pucallpa y la sierra?', a: 'Carretera Federico Basadre', alt: ['Panamericana Norte', 'Carretera Central', 'Via Expresa'] },
+            { q: '¿Qué cultivo tropical agrupal se promueve en Campoverde?', a: 'Palma Aceitera y Cítricos', alt: ['Manzana', 'Melocotón', 'Aceituna'] },
+            { q: '¿Qué tipo de turismo ecológico y recreativo ofrece Campoverde?', a: 'Fundos agro-turísticos', alt: ['Nieve y Esquí', 'Turismo Submarino', 'Desierto'] },
+            { q: '¿Qué plato con cecina ahumada y plátano bellaco es tradicional aquí?', a: 'Tacacho con Cecina', alt: ['Rocoto Relleno', 'Causa Lima', 'Ceviche'] }
+          ]},
+          { name: 'Nueva Requena', prov: 'Coronel Portillo', icon: '🌴', q: [
+            { q: '¿Qué río cruza el territorio de Nueva Requena?', a: 'Río Aguaytía', alt: ['Río Rímac', 'Río Santa', 'Río Tumbes'] },
+            { q: '¿Qué cultivo industrial agrupal ha crecido en Nueva Requena?', a: 'Palma Aceitera', alt: ['Trigo', 'Cebada', 'Vid'] },
+            { q: '¿A qué provincia pertenece el distrito de Nueva Requena?', a: 'Coronel Portillo', alt: ['Padre Abad', 'Atalaya', 'Purús'] },
+            { q: '¿Qué animales silvestres se protegen en los bosques de Nueva Requena?', a: 'Capibaras y Loros', alt: ['Pingüinos', 'Llamas', 'Pondos'] },
+            { q: '¿Qué bebida fermentada suave de yuca preparan sus comunidades?', a: 'Masato', alt: ['Pisco Sour', 'Vino Tinto', 'Cerveza'] }
+          ]},
+          { name: 'Iparía', prov: 'Coronel Portillo', icon: '🛶', q: [
+            { q: '¿Cuál es la capital del distrito de Iparía?', a: 'Iparía', alt: ['Pucallpa', 'Atalaya', 'Masisea'] },
+            { q: '¿Qué comunidades nativas predominan en las cuencas de Iparía?', a: 'Shipibo-Konibo y Asháninka', alt: ['Quechuas', 'Uros', 'Aymaras'] },
+            { q: '¿Cuál es la principal vía de transporte para llegar a Iparía?', a: 'Vía Fluvial (Río Ucayali)', alt: ['Tren de Alta Velocidad', 'Metro', 'Teleférico'] },
+            { q: '¿Qué recurso pesquero natural de gran tamaño habita en sus cochas?', a: 'Paiche', alt: ['Pejerrey', 'Trucha', 'Sardina'] },
+            { q: '¿Qué arte textil bordado elaboran en las comunidades de Iparía?', a: 'Telas con diseño Kené', alt: ['Sombreros de Paja', 'Cerámica Chulucanas', 'Ponchos de Alpaca'] }
+          ]},
+          { name: 'Masisea', prov: 'Coronel Portillo', icon: '🌿', q: [
+            { q: '¿En qué margen del río Ucayali se ubica la localidad de Masisea?', a: 'Margen Derecha', alt: ['Costa Marítima', 'Margen Izquierda del Rímac', 'Andes Altas'] },
+            { q: '¿Qué importante laguna y ecosistema acuático posee Masisea?', a: 'Laguna Imiría', alt: ['Lake Tahoe', 'Titicaca', 'Chinchaycocha'] },
+            { q: '¿Qué área de conservación regional se ubica en el territorio de Masisea?', a: 'ACR Imiría', alt: ['Parque Huascarán', 'Reserva de Paracas', 'Manú'] },
+            { q: '¿Qué especie de mono pequeño y colorido habita sus bosques?', a: 'Pichico y Fraile', alt: ['Gorila', 'Chimpancé', 'Lémur'] },
+            { q: '¿Qué plato típico preparado en hoja de bijao se consume en sus fiestas?', a: 'Patarashca', alt: ['Ceviche', 'Ocopa', 'Cuy Chactado'] }
+          ]},
+          { name: 'Padre Abad (Aguaytía)', prov: 'Padre Abad', icon: '🌉', q: [
+            { q: '¿Cuál es la capital de la provincia de Padre Abad?', a: 'Aguaytía', alt: ['Pucallpa', 'Atalaya', 'Puerto Esperanza'] },
+            { q: '¿Qué impresionante puente colgante es ícono arquitectónico de Aguaytía?', a: 'Puente Aguaytía', alt: ['Puente Villena', 'Puente de las Américas', 'Golden Gate'] },
+            { q: '¿Qué hermosa caída de agua es famoso atractivo de la zona?', a: 'Velo de la Novia', alt: ['Gocta', 'Iguazú', 'Niágara'] },
+            { q: '¿Qué cañón geológico atraviesa la cordillera hacia Tingo María?', a: 'Boquerón del Padre Abad', alt: ['Cañón del Colca', 'Cotahuasi', 'Grand Canyon'] },
+            { q: '¿Qué sopa espesa con gallina de chacra y maní se sirve caliente?', a: 'Inchicapi', alt: ['Patasca', 'Chupe de Camarones', 'Sambar'] }
+          ]},
+          { name: 'Irazola', prov: 'Padre Abad', icon: '🍫', q: [
+            { q: '¿Cuál es la capital del distrito de Irazola?', a: 'San Alejandro', alt: ['Aguaytía', 'Curimaná', 'Neshuya'] },
+            { q: '¿Qué cultivo de exportación ha convertido a Irazola en capital cacaotera?', a: 'Cacao Orgánico', alt: ['Café', 'Algodón', 'Caña de Azúcar'] },
+            { q: '¿Qué feria gastronómica y productiva se celebra en San Alejandro?', a: 'Festival del Cacao y Chocolate', alt: ['Fiesta del Vino', 'Feria de la Fresa', 'Expo Mar'] },
+            { q: '¿Qué río cruza el valle de Irazola?', a: 'Río San Alejandro', alt: ['Río Mantaro', 'Río Urubamba', 'Río Chili'] },
+            { q: '¿Qué producto derivado artesanal fabrican las familias de Irazola?', a: 'Chocolates finos de aroma', alt: ['Queso Helado', 'Chicha de Jora', 'Manjarblanco'] }
+          ]},
+          { name: 'Curimaná', prov: 'Padre Abad', icon: '🔥', q: [
+            { q: '¿Qué recurso energético natural se explota en los yacimientos de Curimaná?', a: 'Gas Natural', alt: ['Carbón mineral', 'Energía Nuclear', 'Geotermia'] },
+            { q: '¿A qué provincia ucayalina pertenece Curimaná?', a: 'Padre Abad', alt: ['Coronel Portillo', 'Atalaya', 'Purús'] },
+            { q: '¿Cuál es la vía principal de acceso a Curimaná desde la carretera?', a: 'Desvío desde Neshuya', alt: ['Vía Marítima', 'Tren del Sur', 'Teleférico'] },
+            { q: '¿Qué río bordea el pueblo de Curimaná?', a: 'Río Aguaytía', alt: ['Río Amazonas', 'Río Marañón', 'Río Ucayali'] },
+            { q: '¿Qué plato con majado de plátano verde y cecina es rey en sus almuerzos?', a: 'Tacacho con Cecina', alt: ['Causa Rellena', 'Seco a la Norteña', 'Tamal'] }
+          ]},
+          { name: 'Neshuya', prov: 'Padre Abad', icon: '🛣️', q: [
+            { q: '¿En qué año fue creado oficialmente el distrito de Neshuya?', a: '2015', alt: ['1990', '1980', '2000'] },
+            { q: '¿En qué cruce estratégico de carreteras se sitúa Neshuya?', a: 'Carretera Federico Basadre y desvío a Curimaná', alt: ['Panamericana Sur', 'Carretera Central', 'Vía de Evitamiento'] },
+            { q: '¿Cuál es la capital del distrito de Neshuya?', a: 'Monte Alegre', alt: ['San Alejandro', 'Aguaytía', 'Pucallpa'] },
+            { q: '¿Qué actividad agrícola y comercial mueve la economía local?', a: 'Cítricos, Plátano y Palma', alt: ['Cosecha de Manzana', 'Vid', 'Olivo'] },
+            { q: '¿Qué refresco natural preparado con plátano maduro se vende en sus rutas?', a: 'Chapo', alt: ['Chicha Morada', 'Vino', 'Cerveza'] }
+          ]},
+          { name: 'Alexander von Humboldt', prov: 'Padre Abad', icon: '🔬', q: [
+            { q: '¿En honor a qué famoso naturalista y sabio alemán se nombró al distrito?', a: 'Alexander von Humboldt', alt: ['Charles Darwin', 'Albert Einstein', 'Isaac Newton'] },
+            { q: '¿En qué cruce geográfico se encuentra el poblado de Von Humboldt?', a: 'Km 86 de la Carretera Federico Basadre', alt: ['Panamericana Norte Km 10', 'Plaza Mayor de Lima', 'Frontera con Bolivia'] },
+            { q: '¿Qué investigación forestal histórica se realizó en sus bosques?', a: 'Bosque Nacional Alexander von Humboldt', alt: ['Reserva del Manu', 'Parque Huascarán', 'Lomas de Lachay'] },
+            { q: '¿Qué industria maderera sostenible se promueve en la zona?', a: 'Manejo forestal certificado', alt: ['Minería de Carbón', 'Pesca Marítima', 'Textil'] },
+            { q: '¿Qué envoltorio vegetal se utiliza para cocinar los tradicionales Juanes?', a: 'Hoja de Bijao', alt: ['Hoja de Plátano', 'Papel Aluminio', 'Cáscara de Maíz'] }
+          ]},
+          { name: 'Raymondi (Atalaya)', prov: 'Atalaya', icon: '🌳', q: [
+            { q: '¿Qué ríos se unen en Raymondi para dar origen al majestuoso río Ucayali?', a: 'Río Tambo y Río Urubamba', alt: ['Marañón y Napo', 'Mantaro y Apurímac', 'Rímac y Santa'] },
+            { q: '¿Cómo se le denomina cariñosamente a la ciudad de Atalaya?', a: 'La Ciudad de los Tres Ríos', alt: ['Ciudad Blanca', 'Perla del Pacífico', 'Capital del Sol'] },
+            { q: '¿Qué importante etnia originaria es símbolo cultural en Atalaya?', a: 'Asháninka', alt: ['Moche', 'Uros', 'Quechua'] },
+            { q: '¿Qué fruto nativo alto en Vitamina C abunda en sus bosques?', a: 'Camu Camu', alt: ['Fresa', 'Uva', 'Manzana'] },
+            { q: '¿Qué sopa de gallina con maní molido se ofrece a los visitantes?', a: 'Inchicapi', alt: ['Patasca', 'Chupe', 'Sambar'] }
+          ]},
+          { name: 'Tahuanía', prov: 'Atalaya', icon: '🛶', q: [
+            { q: '¿Cuál es la capital del distrito de Tahuanía?', a: 'Bolognesi', alt: ['Atalaya', 'Sepahua', 'Breu'] },
+            { q: '¿A orillas de qué río importante se ubica la localidad de Bolognesi?', a: 'Río Ucayali', alt: ['Río Rímac', 'Río Santa', 'Río Marañón'] },
+            { q: '¿Qué pobladores originarios integran las comunidades de Tahuanía?', a: 'Shipibo y Asháninka', alt: ['Aymaras', 'Uros', 'Collas'] },
+            { q: '¿Qué actividad artesanal sostenible practican sus mujeres?', a: 'Tejido en fibra de cogollo y bisutería', alt: ['Orfebrería en Oro', 'Vidrio Soplado', 'Cerámica Chulucanas'] },
+            { q: '¿Qué pescado asado en hojas de bijao es delicia local?', a: 'Patarashca', alt: ['Ceviche', 'Tiradito', 'Choritos al Olivo'] }
+          ]},
+          { name: 'Sepahua', prov: 'Atalaya', icon: '🏹', q: [
+            { q: '¿Qué río principal atraviesa el distrito de Sepahua?', a: 'Río Urubamba', alt: ['Río Rímac', 'Río Tumbes', 'Río Mantaro'] },
+            { q: '¿Qué diversidad étnica coexiste en el distrito de Sepahua?', a: 'Yine, Matsigenka y Asháninka', alt: ['Quechuas del Colca', 'Chachapoyas', 'Chimú'] },
+            { q: '¿A qué provincia pertenece el distrito de Sepahua?', a: 'Atalaya', alt: ['Coronel Portillo', 'Padre Abad', 'Purús'] },
+            { q: '¿Qué actividad tradicional de subsistencia realizan sus comunidades?', a: 'Pesca artesanal y Caza', alt: ['Industria Metalúrgica', 'Cosecha de Vid', 'Minería'] },
+            { q: '¿Qué bebida suave y nutritiva de plátano maduro se toma a diario?', a: 'Chapo', alt: ['Chicha Morada', 'Cerveza', 'Pisco Sour'] }
+          ]},
+          { name: 'Yurúa', prov: 'Atalaya', icon: '🦜', q: [
+            { q: '¿Cuál es la capital del distrito fronterizo de Yurúa?', a: 'Breu', alt: ['Atalaya', 'Sepahua', 'Pucallpa'] },
+            { q: '¿Con qué país limita directamente el distrito de Yurúa al este?', a: 'Brasil', alt: ['Ecuador', 'Colombia', 'Bolivia'] },
+            { q: '¿Qué etnias originarias habitan la cuenca del río Alto Yurúa?', a: 'Yaminahua y Yanesha', alt: ['Uros', 'Aymaras', 'Moches'] },
+            { q: '¿Qué medio de transporte es indispensable para conectar Breu?', a: 'Vía Aérea y Fluvial', alt: ['Tren Subterráneo', 'Autopista de 4 carriles', 'Metro'] },
+            { q: '¿Qué bebida ancestral de yuca se comparte en sus asambleas?', a: 'Masato', alt: ['Chicha de Jora', 'Vino Tinto', 'Limonada'] }
+          ]},
+          { name: 'Purús', prov: 'Purús', icon: '🦅', q: [
+            { q: '¿Cuál es la capital de la provincia fronteriza de Purús?', a: 'Puerto Esperanza', alt: ['Pucallpa', 'Aguaytía', 'Atalaya'] },
+            { q: '¿Con qué país limita directamente la provincia de Purús?', a: 'Brasil', alt: ['Ecuador', 'Colombia', 'Bolivia'] },
+            { q: '¿Qué gran Parque Nacional protege la megadiversidad en Purús?', a: 'Parque Nacional Alto Purús', alt: ['Parque Huascarán', 'Reserva de Paracas', 'Lomas de Lachay'] },
+            { q: '¿Por qué medio se accede principalmente a Puerto Esperanza?', a: 'Vía Aérea (Vuelos de apoyo)', alt: ['Carretera Asfaltada', 'Tren', 'Subterráneo'] },
+            { q: '¿Qué bebida tradicional de yuca molida y fermentada se comparte?', a: 'Masato', alt: ['Chicha Morada', 'Cerveza', 'Pisco'] }
+          ]}
+        ],
+        peru: [
+          { name: 'Amazonas', prov: 'Selva Norte', icon: '🏔️', q: [
+            { q: '¿Cuál es la capital del departamento de Amazonas?', a: 'Chachapoyas', alt: ['Bagua', 'Jaén', 'Mendoza'] },
+            { q: '¿Qué impresionante fortaleza arqueológica pre-inca está en Amazonas?', a: 'Kuelap', alt: ['Machu Picchu', 'Chan Chan', 'Sacsayhuamán'] },
+            { q: '¿Cuál es la segunda catarata más alta del Perú ubicaba en Amazonas?', a: 'Catarata Gocta', alt: ['Velo de la Novia', 'Iguazú', 'Niágara'] },
+            { q: '¿Qué río principal atraviesa el departamento de Amazonas?', a: 'Río Marañón', alt: ['Río Rímac', 'Río Mantaro', 'Río Santa'] },
+            { q: '¿Qué cultura pre-inca construyó los sarcófagos de Karajía?', a: 'Cultura Chachapoyas', alt: ['Cultura Moche', 'Cultura Nazca', 'Cultura Inka'] }
+          ]},
+          { name: 'Áncash', prov: 'Sierra y Costa Central', icon: '🏔️', q: [
+            { q: '¿Cuál es la capital del departamento de Áncash?', a: 'Huaraz', alt: ['Chimbote', 'Casma', 'Caraz'] },
+            { q: '¿Qué nevado es el pico más alto del Perú con 6,768 msnm?', a: 'Huascarán', alt: ['Yerupajá', 'Misti', 'Alpamayo'] },
+            { q: '¿Qué sitio arqueológico de la cultura Chavín está en Áncash?', a: 'Chavín de Huántar', alt: ['Machu Picchu', 'Caral', 'Paramonga'] },
+            { q: '¿Qué turística laguna de agua turquesa se encuentra en la Cordillera Blanca?', a: 'Laguna Llanganuco', alt: ['Titicaca', 'Paca', 'Huacachina'] },
+            { q: '¿Qué importante puerto pesquero y siderúrgico es el más grande de Áncash?', a: 'Chimbote', alt: ['Callao', 'Paita', 'Ilo'] }
+          ]},
+          { name: 'Apurímac', prov: 'Sierra Sur', icon: '🌄', q: [
+            { q: '¿Cuál es la capital del departamento de Apurímac?', a: 'Abancay', alt: ['Andahuaylas', 'Grau', 'Cotabambas'] },
+            { q: '¿Qué fiesta tradicional de integración con danza se celebra en Andahuaylas?', a: 'El Yawar Fiesta / Yawar Raymi', alt: ['Inti Raymi', 'San Juan', 'Carnaval'] },
+            { q: '¿Qué gran río da nombre al departamento de Apurímac?', a: 'Río Apurímac', alt: ['Río Ucayali', 'Río Mantaro', 'Río Urubamba'] },
+            { q: '¿Qué santuario nacional protege los bosques de intimpa en Abancay?', a: 'Santuario Ampay', alt: ['Manu', 'Huascarán', 'Paracas'] },
+            { q: '¿Qué plato con cuy frito y papas es clásico en Apurímac?', a: 'Cuy Chactado', alt: ['Juane', 'Ceviche', 'Tacacho'] }
+          ]},
+          { name: 'Arequipa', prov: 'Sierra Sur', icon: '🌋', q: [
+            { q: '¿Qué volcán es el símbolo de la ciudad de Arequipa?', a: 'El Misti', alt: ['Ubinas', 'Sabancaya', 'Coropuna'] },
+            { q: '¿Por qué material volcánico blanco se le conoce como la Ciudad Blanca?', a: 'El Sillar', alt: ['Mármol', 'Yeso', 'Cal'] },
+            { q: '¿Qué profundo cañón es famoso para avistar el vuelo del cóndor?', a: 'Cañón del Colca', alt: ['Boquerón', 'Cotahuasi', 'Grand Canyon'] },
+            { q: '¿Qué plato picante horneado relleno de carne es típico de Arequipa?', a: 'Rocoto Relleno', alt: ['Causa Rellena', 'Lomo Saltado', 'Ceviche'] },
+            { q: '¿Qué postre helado con canela y leche es tradicional en su plaza?', a: 'Queso Helado', alt: ['Suspiro a la Limeña', 'Picarones', 'Crema Volteada'] }
+          ]},
+          { name: 'Ayacucho', prov: 'Sierra Sur', icon: '🎭', q: [
+            { q: '¿Por cuántas iglesias coloniales es famosa la ciudad de Ayacucho?', a: '33 Iglesias', alt: ['10 Iglesias', '50 Iglesias', '7 Iglesias'] },
+            { q: '¿Qué arte artesanal en cajas de madera tallada e imágenes es ícono ayacuchano?', a: 'Retablo Ayacuchano', alt: ['Kené', 'Cerámica Chulucanas', 'Toritos de Pucará'] },
+            { q: '¿Qué batalla decisiva por la independencia de América ocurrió en 1824 en Ayacucho?', a: 'Batalla de Ayacucho', alt: ['Batalla de Junín', 'Batalla de Arica', 'Batalla de Maipú'] },
+            { q: '¿Qué sitio arqueológico fue la capital del Imperio Wari en Ayacucho?', a: 'Complejo Wari', alt: ['Machu Picchu', 'Chan Chan', 'Caral'] },
+            { q: '¿Qué caldo tradicional de mondongo y maíz se sirve caliente en las mañanas?', a: 'Patasca', alt: ['Inchicapi', 'Chupe de Camarones', 'Sambar'] }
+          ]},
+          { name: 'Cajamarca', prov: 'Sierra Norte', icon: '🧀', q: [
+            { q: '¿En qué cuarto histórico el Inca Atahualpa ofreció oro y plata por su rescate?', a: 'El Cuarto del Rescate', alt: ['Sacsayhuamán', 'Machu Picchu', 'Kuelap'] },
+            { q: '¿Qué famosa fiesta de comparsas y pintura convierte a Cajamarca en capital del...', a: 'Carnaval Peruano', alt: ['Inti Raymi', 'Fiesta de San Juan', 'Festival del Mar'] },
+            { q: '¿Qué acueducto pre-inca tallado en roca se ubica en Cumbemayo?', a: 'Canal de Cumbemayo', alt: ['Tipón', 'Tambomachay', 'Pachacámac'] },
+            { q: '¿Qué producto lácteo es el más famoso y exportado de Cajamarca?', a: 'Queso y Manjarblanco', alt: ['Mantequilla de maní', 'Yogurt de camu camu', 'Queso Helado'] },
+            { q: '¿Qué baños termales históricos eran frecuentados por el Inca Atahualpa?', a: 'Baños del Inca', alt: ['Churín', 'Malleco', 'Machu Picchu'] }
+          ]},
+          { name: 'Callao', prov: 'Costa Central', icon: '⚓', q: [
+            { q: '¿Qué importante fortaleza militar colonial protege la bahía del Callao?', a: 'Fortaleza del Real Felipe', alt: ['Morro Solar', 'Huaca Pucllana', 'Paramonga'] },
+            { q: '¿Qué islas frente al Callao albergan una gran colonia de lobos marinos?', a: 'Islas Palomino', alt: ['Islas Ballestas', 'San Lorenzo', 'Galápagos'] },
+            { q: '¿Cuál es el primer puerto marítimo del Perú?', a: 'Puerto del Callao', alt: ['Paita', 'Ilo', 'Matarani'] },
+            { q: '¿Qué género musical de salsa y ritmo es parte de la identidad chalaca?', a: 'La Salsa', alt: ['Cumbia', 'Huayno', 'Marinera'] },
+            { q: '¿Qué plato con choros marinados en limón, cebolla y tomate es típico?', a: 'Choritos a la Chalaca', alt: ['Juane', 'Tacacho', 'Ocopa'] }
+          ]},
+          { name: 'Cusco', prov: 'Sierra Sur', icon: '🦙', q: [
+            { q: '¿Qué ciudadela inca es considera Maravilla del Mundo en Cusco?', a: 'Machu Picchu', alt: ['Chan Chan', 'Kuelap', 'Sacsayhuamán'] },
+            { q: '¿Cuál fue la capital imperial del Tahuantinsuyo?', a: 'Cusco', alt: ['Lima', 'Arequipa', 'Cajamarca'] },
+            { q: '¿Qué fortaleza inca destaca por sus muros de piedra megalíticos?', a: 'Sacsayhuamán', alt: ['Pachacámac', 'Kotosh', 'Tucume'] },
+            { q: '¿Qué fiesta inca del sol se celebra cada 24 de junio en Cusco?', a: 'Inti Raymi', alt: ['San Juan', 'Carnaval', 'Virgen de la Candelaria'] },
+            { q: '¿Qué plato cocinado bajo tierra con piedras calientes es clásico en Cusco?', a: 'Pachamanca', alt: ['Juane', 'Tacacho', 'Ceviche'] }
+          ]},
+          { name: 'Huancavelica', prov: 'Sierra Central', icon: '⛏️', q: [
+            { q: '¿Qué famosa mina de mercurio o azogue explotaron en la época colonial en Huancavelica?', a: 'Mina Santa Bárbara', alt: ['Cerro de Pasco', 'Toquepala', 'Yanacocha'] },
+            { q: '¿Qué baile de competencia ancestral con tijeras de metal es Patrimonio de la Humanidad?', a: 'Danza de las Tijeras', alt: ['Diablada', 'Morenada', 'Marinera'] },
+            { q: '¿Cuál es la capital del departamento de Huancavelica?', a: 'Huancavelica', alt: ['Lircay', 'Acobamba', 'Castrovirreyna'] },
+            { q: '¿Qué auquénido de lana fina se cría extensivamente en sus punas?', a: 'Alpaca y Vicuña', alt: ['Camello', 'Oveja', 'Cabra'] },
+            { q: '¿Qué plato tradicional a base de maíz pelado frito o en sopa es típico?', a: 'Patasca Huancavelicana', alt: ['Ceviche', 'Juane', 'Tacacho'] }
+          ]},
+          { name: 'Huánuco', prov: 'Sierra y Selva Central', icon: '✋', q: [
+            { q: '¿Qué templo pre-cerámico arqueológico famoso por sus relieves está en Huánuco?', a: 'Templo de las Manos Cruzadas de Kotosh', alt: ['Caral', 'Chavín', 'Kuelap'] },
+            { q: '¿Qué ciudad conocida como la "Puebla de la Eterna Primavera" es la capital de Huánuco?', a: 'Huánuco', alt: ['Tingo María', 'Dos de Mayo', 'Leoncio Prado'] },
+            { q: '¿Qué bella cadena de montañas con forma de silueta humana está en Tingo María?', a: 'La Bella Durmiente', alt: ['Huascarán', 'Misti', 'Alpamayo'] },
+            { q: '¿Qué cueva gigante habitada por guácharos y murciélagos se ubica en Tingo María?', a: 'Cueva de las Lechuzas', alt: ['Cueva de Guagapo', 'Toquepala', 'Huagapo'] },
+            { q: '¿Qué plato de papa sancochada con crema de ají mirasol y queso es originario de esta zona?', a: 'Papa a la Huancaína', alt: ['Ocopa', 'Rocoto Relleno', 'Causa'] }
+          ]},
+          { name: 'Ica', prov: 'Costa Sur', icon: '🏜️', q: [
+            { q: '¿Qué hermoso oasis natural rodeado de dunas de arena se ubica en Ica?', a: 'Laguna de Huacachina', alt: ['Yarinacocha', 'Llanganuco', 'Titicaca'] },
+            { q: '¿Qué misteriosos geoglifos gigantes trazados en el desierto son Patrimonio Mundial?', a: 'Líneas de Nazca', alt: ['Chavín', 'Kuelap', 'Sillustani'] },
+            { q: '¿Qué reserva nacional marina protege pingüinos de Humboldt y lobos marinos?', a: 'Reserva Nacional de Paracas', alt: ['Manu', 'Pacaya Samiria', 'Huascarán'] },
+            { q: '¿Qué destilado de uva es la bebida nacional del Perú producida en Ica?', a: 'Pisco', alt: ['Ron', 'Tequila', 'Vodka'] },
+            { q: '¿Qué plato tradicional criollo a base de carapulcra y sopa seca se sirve en Chincha?', a: 'Mancha Pecho', alt: ['Juane', 'Tacacho', 'Pachamanca'] }
+          ]},
+          { name: 'Junín', prov: 'Sierra Central', icon: '🚂', q: [
+            { q: '¿Cuál es la capital del departamento de Junín ubicada en el Valle del Mantaro?', a: 'Huancayo', alt: ['Jauja', 'Tarma', 'La Oroya'] },
+            { q: '¿Qué lago gigante andino (también llamado Chinchaycocha) está en Junín?', a: 'Lago Junín', alt: ['Titicaca', 'Huacachina', 'Llanganuco'] },
+            { q: '¿Qué batalla libertadora a caballo con sables ocurrió en las pampas de Junín en 1824?', a: 'Batalla de Junín', alt: ['Batalla de Ayacucho', 'Batalla de Arica', 'Batalla de Angamos'] },
+            { q: '¿Qué baile alegre de zapateo folclórico se celebra en los carnavales de Huancayo?', a: 'Huaylarsh', alt: ['Marinera', 'Samba', 'Tango'] },
+            { q: '¿Qué plato caliente de papas con salsa huancaína es famoso en la región?', a: 'Papa a la Huancaína', alt: ['Ceviche', 'Juane', 'Tacacho'] }
+          ]},
+          { name: 'La Libertad', prov: 'Costa Norte', icon: '🏰', q: [
+            { q: '¿Qué ciudadela de barro pre-inca es la más grande de América en La Libertad?', a: 'Chan Chan', alt: ['Machu Picchu', 'Kuelap', 'Caral'] },
+            { q: '¿Cuál es la capital del departamento conocida como "La Ciudad de la Eterna Primavera"?', a: 'Trujillo', alt: ['Chimbote', 'Chiclayo', 'Piura'] },
+            { q: '¿Qué baile de elegancia y pañuelos es la danza nacional del Perú celebrada en Trujillo?', a: 'La Marinera Norteña', alt: ['Huayno', 'Festejo', 'Samba'] },
+            { q: '¿Qué balneario famoso por sus caballitos de totora se ubica cerca de Trujillo?', a: 'Huanchaco', alt: ['Máncora', 'Paracas', 'Ancón'] },
+            { q: '¿Qué templos de la cultura Moche destacan cerca de Trujillo?', a: 'Huacas del Sol y de la Luna', alt: ['Sillustani', 'Pachacámac', 'Chavín'] }
+          ]},
+          { name: 'Lambayeque', prov: 'Costa Norte', icon: '👑', q: [
+            { q: '¿Qué tumba real intacta del Imperio Moche se descubrió en Sipán en 1987?', a: 'El Señor de Sipán', alt: ['Dama de Cao', 'Atahualpa', 'Túpac Amaru'] },
+            { q: '¿Cuál es la ciudad capital del departamento de Lambayeque?', a: 'Chiclayo', alt: ['Piura', 'Trujillo', 'Tumbes'] },
+            { q: '¿Qué complejo de pirámides de barro se ubica en Túcume?', a: 'Pirámides de Túcume', alt: ['Chan Chan', 'Paramonga', 'Caral'] },
+            { q: '¿Qué postre gigante de hojaldre, manjarblanco y dulce de piña nació en Lambayeque?', a: 'King Kong', alt: ['Queso Helado', 'Picarones', 'Suspiro'] },
+            { q: '¿Qué plato con arroz verde y pato sazonado con chicha de jora es ícono chiclayano?', a: 'Arroz con Pato', alt: ['Juane', 'Tacacho', 'Ceviche'] }
+          ]},
+          { name: 'Lima', prov: 'Costa Central', icon: '🏛️', q: [
+            { q: '¿Cuál es la capital de la República del Perú?', a: 'Lima', alt: ['Cusco', 'Arequipa', 'Trujillo'] },
+            { q: '¿Qué plato bandera peruano preparado con pescado fresco y limón nació en sus costas?', a: 'Ceviche', alt: ['Juane', 'Pachamanca', 'Ocopa'] },
+            { q: '¿Qué civilización más antigua de América (5,000 años) se descubrió en Supe, Lima?', a: 'Caral', alt: ['Inca', 'Moche', 'Chavín'] },
+            { q: '¿Qué histórico distrito bohemio es famoso por su Puente de los Suspiros?', a: 'Barranco', alt: ['Miraflores', 'San Isidro', 'Breña'] },
+            { q: '¿Qué postre frito en aros bañado en miel de chancaca se consume tradicionalmente?', a: 'Picarones', alt: ['Queso Helado', 'King Kong', 'Crema Volteada'] }
+          ]},
+          { name: 'Loreto', prov: 'Selva Norte', icon: '🌳', q: [
+            { q: '¿Cuál es la ciudad capital del departamento de Loreto y la más grande sin acceso terrestre?', a: 'Iquitos', alt: ['Pucallpa', 'Tarapoto', 'Yurimaguas'] },
+            { q: '¿Qué río nace de la unión del Marañón y Ucayali en Loreto?', a: 'Río Amazonas', alt: ['Río Rímac', 'Río Santa', 'Río Mantaro'] },
+            { q: '¿Qué reserva nacional famosa protege los delfines rosados y manatíes en Loreto?', a: 'Pacaya Samiria', alt: ['Parque Huascarán', 'Lachay', 'Paracas'] },
+            { q: '¿Qué construcción de fierro diseñada por Gustave Eiffel está en la Plaza de Iquitos?', a: 'Casa de Fierro', alt: ['Torre Eiffel', 'Puente de las Américas', 'Palacio de Gobierno'] },
+            { q: '¿Qué plato con arroz verde y gallina envuelto en hoja de bijao es ícono?', a: 'Juane', alt: ['Ceviche', 'Causa', 'Pachamanca'] }
+          ]},
+          { name: 'Madre de Dios', prov: 'Selva Sur', icon: '🐆', q: [
+            { q: '¿Cuál es la capital del departamento de Madre de Dios?', a: 'Puerto Maldonado', alt: ['Iñapari', 'Salvación', 'Mazuko'] },
+            { q: '¿Qué Parque Nacional es uno de los lugares de mayor biodiversidad del planeta?', a: 'Parque Nacional del Manu', alt: ['Huascarán', 'Pacaya Samiria', 'Paracas'] },
+            { q: '¿Qué importante Reserva Nacional protege la cuenca del río Tambopata?', a: 'Reserva Nacional Tambopata', alt: ['Lachay', 'Ampay', 'Junín'] },
+            { q: '¿Qué castaña o nuez de árbol gigante se recolecta comercialmente en Madre de Dios?', a: 'Castaña del Brasil / Madre de Dios', alt: ['Nuez de la India', 'Avellana', 'Pistacho'] },
+            { q: '¿Con qué dos países fronterizos limita el departamento de Madre de Dios?', a: 'Brasil y Bolivia', alt: ['Ecuador y Colombia', 'Chile y Argentina', 'Paraguay y Uruguay'] }
+          ]},
+          { name: 'Moquegua', prov: 'Costa/Sierra Sur', icon: '🍇', q: [
+            { q: '¿Cuál es la capital del departamento de Moquegua?', a: 'Moquegua', alt: ['Ilo', 'Omate', 'Torata'] },
+            { q: '¿Qué puerto industrial y pesquero es el más importante de Moquegua?', a: 'Puerto de Ilo', alt: ['Callao', 'Paita', 'Chimbote'] },
+            { q: '¿Qué cultivo de frutales de sol destaca para la producción de piscos y vinos en Moquegua?', a: 'La Vid (Uvas) y Paltas', alt: ['Manzanas', 'Naranjas', 'Plátanos'] },
+            { q: '¿Qué volcán activo se encuentra en la provincia de General Sánchez Cerro en Moquegua?', a: 'Volcán Ubinas', alt: ['Misti', 'Huascarán', 'Pichu Pichu'] },
+            { q: '¿Qué dulce tradicional a base de manjarblanco y alfajor es famoso en Torata?', a: 'Guargüero y Alfajores', alt: ['King Kong', 'Queso Helado', 'Picarones'] }
+          ]},
+          { name: 'Pasco', prov: 'Sierra y Selva Central', icon: '🏔️', q: [
+            { q: '¿Qué ciudad capital de Pasco es conocida como la "Capital Minera del Perú"?', a: 'Cerro de Pasco', alt: ['Oxapampa', 'Yanahuanca', 'Villa Rica'] },
+            { q: '¿Qué hermosa provincia de Pasco fue colonizada por inmigrantes austro-alemanes?', a: 'Oxapampa', alt: ['Chanchamayo', 'Huancayo', 'Tarma'] },
+            { q: '¿Qué localidad de Pasco produce uno de los cafés más reconocidos del mundo?', a: 'Villa Rica', alt: ['Pucallpa', 'Trujillo', 'Callao'] },
+            { q: '¿Qué bosque de piedras gigante de figuras rocosas se ubica en Huayllay?', a: 'Santuario Nacional de Huayllay', alt: ['Marcahuasi', 'Cumbemayo', 'Kotosh'] },
+            { q: '¿A qué altitud aproximada se encuentra Cerro de Pasco (una de las ciudades más altas del mundo)?', a: 'Más de 4,300 msnm', alt: ['1,500 msnm', '500 msnm', '2,500 msnm'] }
+          ]},
+          { name: 'Piura', prov: 'Costa Norte', icon: '☀️', q: [
+            { q: '¿Qué famoso balneario de playas cálidas y avistamiento de ballenas está en Piura?', a: 'Máncora', alt: ['Huanchaco', 'Paracas', 'Ancón'] },
+            { q: '¿Cuál es la ciudad conocida como la "Ciudad del Eterno Calor"?', a: 'Piura', alt: ['Tumbes', 'Chiclayo', 'Sullana'] },
+            { q: '¿Qué artesanía en cerámica de arcilla fina se elabora en Chulucanas?', a: 'Cerámica de Chulucanas', alt: ['Retablos', 'Kené', 'Toritos de Pucará'] },
+            { q: '¿Qué puerto pesquero es el más septentrional de Piura?', a: 'Paita', alt: ['Callao', 'Ilo', 'Chimbote'] },
+            { q: '¿Qué seco de carne de chavelo hecho con plátano verde majado es típico de Piura?', a: 'Seco de Chavelo', alt: ['Juane', 'Tacacho', 'Pachamanca'] }
+          ]},
+          { name: 'Puno', prov: 'Sierra Sur', icon: '⛵', q: [
+            { q: '¿Qué lago navegable es el más alto del mundo ubicado en Puno a 3,812 msnm?', a: 'Lago Titicaca', alt: ['Junín', 'Huacachina', 'Llanganuco'] },
+            { q: '¿Qué famosas islas flotantes hechas de totora son habitadas por los Uros en Puno?', a: 'Islas de los Uros', alt: ['Islas Ballestas', 'Palomino', 'San Lorenzo'] },
+            { q: '¿Qué festividad folclórica patronal en febrero es Patrimonio Cultural en Puno?', a: 'Virgen de la Candelaria', alt: ['Inti Raymi', 'San Juan', 'Carnaval'] },
+            { q: '¿Qué chullpas o torres funerarias de piedra pre-incas se ubican en Sillustani?', a: 'Chullpas de Sillustani', alt: ['Machu Picchu', 'Chan Chan', 'Kuelap'] },
+            { q: '¿Qué isla natural del Lago Titicaca es famosa por los tejidos hechos por varones?', a: 'Isla Taquile', alt: ['Isla Amantaní', 'Isla del Sol', 'Isla Blanca'] }
+          ]},
+          { name: 'San Martín', prov: 'Selva Alta', icon: '☕', q: [
+            { q: '¿Cuál es la capital oficial del departamento de San Martín?', a: 'Moyobamba', alt: ['Tarapoto', 'Juanjuí', 'Rioja'] },
+            { q: '¿Qué ciudad comercial turística es la más poblada de San Martín?', a: 'Tarapoto', alt: ['Iquitos', 'Pucallpa', 'Huaraz'] },
+            { q: '¿Qué hermosa laguna azul turística se ubica en el distrito de El Sauce?', a: 'Laguna Azul', alt: ['Yarinacocha', 'Huacachina', 'Lake Tahoe'] },
+            { q: '¿Por qué variedad floral se le conoce a Moyobamba como la "Ciudad de las..."?', a: 'Orquídeas', alt: ['Rosas', 'Girasoles', 'Tulipanes'] },
+            { q: '¿Qué licor exótico macerado tradicional se elabora con corteza de árbol en la selva?', a: 'Chuchuhuasi / 7 Raíces', alt: ['Pisco Sour', 'Vino Tinto', 'Cerveza'] }
+          ]},
+          { name: 'Tacna', prov: 'Costa Sur', icon: '🏛️', q: [
+            { q: '¿Cómo se le denomina heroicamente a la ciudad de Tacna en la historia del Perú?', a: 'La Ciudad Heroica', alt: ['Ciudad Blanca', 'Eterna Primavera', 'Capital del Sol'] },
+            { q: '¿Qué importante arco triunfal de bronce se ubica en la Plaza de Armas de Tacna?', a: 'Arco del Parral / Paseo Cívico', alt: ['Arco del Triunfo', 'Puente Villena', 'Obelisco'] },
+            { q: '¿Con qué país limita directamente el departamento de Tacna al sur?', a: 'Chile', alt: ['Bolivia', 'Brasil', 'Ecuador'] },
+            { q: '¿Qué petroglifos pre-incas grabados en piedra se ubican en Miculla, Tacna?', a: 'Petroglifos de Miculla', alt: ['Líneas de Nazca', 'Chavín', 'Caral'] },
+            { q: '¿Qué plato caliente a base de ají, carne de res y charqui es tradicional tacneño?', a: 'Picante a la Tacneña', alt: ['Juane', 'Tacacho', 'Ceviche'] }
+          ]},
+          { name: 'Tumbes', prov: 'Costa Norte', icon: '🦪', q: [
+            { q: '¿Qué ecosistema de bosques flotantes sobre agua salada protege las conchas negras?', a: 'Los Manglares de Tumbes', alt: ['Pacaya Samiria', 'Manu', 'Paracas'] },
+            { q: '¿Con qué país del norte limita directamente el departamento de Tumbes?', a: 'Ecuador', alt: ['Colombia', 'Brasil', 'Chile'] },
+            { q: '¿Qué famosa playa balneario turística destaca en Tumbes por sus aguas cálidas?', a: 'Punta Sal y Zorritos', alt: ['Huanchaco', 'Paracas', 'Ancón'] },
+            { q: '¿Qué plato con mariscos moluscos extraídos de los manglares es típico de Tumbes?', a: 'Ceviche de Conchas Negras', alt: ['Juane', 'Tacacho', 'Pachamanca'] },
+            { q: '¿Qué parque nacional con fauna tropical como el mono coto de Tumbes está en esta zona?', a: 'Parque Nacional Cerros de Amotape', alt: ['Huascarán', 'Lachay', 'Ampay'] }
+          ]},
+          { name: 'Ucayali', prov: 'Selva Central', icon: '🌿', q: [
+            { q: '¿Cuál es la capital del departamento de Ucayali?', a: 'Pucallpa', alt: ['Iquitos', 'Tarapoto', 'Tingo María'] },
+            { q: '¿Qué río amazónico da nombre al departamento de Ucayali?', a: 'Río Ucayali', alt: ['Río Amazonas', 'Río Marañón', 'Río Urubamba'] },
+            { q: '¿Cuántas provincias conforman el departamento de Ucayali?', a: '4 Provincias', alt: ['2 Provincias', '8 Provincias', '10 Provincias'] },
+            { q: '¿Qué arte pictórico nativo con geometrías elaboran las mujeres Shipibo-Konibo?', a: 'Diseño Kené', alt: ['Retablos', 'Chulucanas', 'Moche'] },
+            { q: '¿Qué fruto amazónico con altísima vitamina C se cultiva extensivamente en Ucayali?', a: 'Camu Camu', alt: ['Manzana', 'Fresa', 'Uva'] }
+          ]}
+        ],
+        mundo: [
+          { name: 'Argentina', prov: 'América del Sur', icon: '🇦🇷', q: [
+            { q: '¿Cuál es la capital de Argentina?', a: 'Buenos Aires', alt: ['Córdoba', 'Mendoza', 'Rosario'] },
+            { q: '¿Qué género musical y baile rioplatense es ícono cultural de Argentina?', a: 'El Tango', alt: ['Samba', 'Salsa', 'Flamenco'] },
+            { q: '¿Qué famosas cataratas gigantes comparte Argentina con Brasil?', a: 'Cataratas del Iguazú', alt: ['Gocta', 'Niágara', 'Victoria'] },
+            { q: '¿Qué infusión tradicional de hierbas se toma a diario en bombilla?', a: 'El Mate', alt: ['Té Verde', 'Café', 'Chicha'] },
+            { q: '¿Qué corte de carne asada al carbón es la comida nacional de Argentina?', a: 'El Asado', alt: ['Sushi', 'Tacos', 'Paella'] }
+          ]},
+          { name: 'Bolivia', prov: 'América del Sur', icon: '🇧🇴', q: [
+            { q: '¿Cuál es la capital constitucional de Bolivia?', a: 'Sucre (y La Paz sede de gobierno)', alt: ['Santa Cruz', 'Cochabamba', 'Oruro'] },
+            { q: '¿Qué desierto de sal blanco es el más grande del mundo ubicado en Bolivia?', a: 'Salar de Uyuni', alt: ['Atacama', 'Sahara', 'Gobi'] },
+            { q: '¿Qué lago navegable comparte Bolivia con el Perú?', a: 'Lago Titicaca', alt: ['Lake Tahoe', 'Junín', 'Maracaibo'] },
+            { q: '¿Qué famoso carnaval folclórico andino es Patrimonio en Bolivia?', a: 'Carnaval de Oruro', alt: ['Carnaval de Río', 'San Juan', 'Venecia'] },
+            { q: '¿Qué empanada jugosa horneada rellena de carne o pollo es típica en Bolivia?', a: 'La Salteña', alt: ['Arepa', 'Taco', 'Tamal'] }
+          ]},
+          { name: 'Brasil', prov: 'América del Sur', icon: '🇧🇷', q: [
+            { q: '¿Cuál es el idioma oficial de Brasil?', a: 'Portugués', alt: ['Español', 'Inglés', 'Francés'] },
+            { q: '¿Qué estatua gigante del Cristo Redentor se ubica en Río de Janeiro?', a: 'Cristo del Corcovado', alt: ['Estatua de la Libertad', 'Torre Eiffel', 'Big Ben'] },
+            { q: '¿Cuál es la capital federal de Brasil?', a: 'Brasilia', alt: ['Río de Janeiro', 'San Pablo', 'Salvador'] },
+            { q: '¿Qué baile y ritmo alegre es el símbolo del Carnaval de Río?', a: 'Samba', alt: ['Tango', 'Salsa', 'Flamenco'] },
+            { q: '¿Qué gran selva tropical comparte Brasil con el Perú?', a: 'La Selva Amazónica', alt: ['Selva Negra', 'Taiga', 'Sabana'] }
+          ]},
+          { name: 'Chile', prov: 'América del Sur', icon: '🇨🇱', q: [
+            { q: '¿Cuál es la capital de Chile?', a: 'Santiago', alt: ['Valparaíso', 'Concepción', 'Antofagasta'] },
+            { q: '¿Qué desierto en el norte de Chile es considerado el más árido del mundo?', a: 'Desierto de Atacama', alt: ['Sahara', 'Gobi', 'Sechura'] },
+            { q: '¿Qué isla chilena en el Océano Pacífico es famosa por sus estatuas gigantes moái?', a: 'Isla de Pascua (Rapa Nui)', alt: ['Galápagos', 'Tahití', 'Madagascar'] },
+            { q: '¿Qué Parque Nacional en la Patagonia chilena es famoso por sus torres de granito?', a: 'Torres del Paine', alt: ['Manu', 'Iguazú', 'Yellowstone'] },
+            { q: '¿Qué baile folclórico tradicional con pañuelo es el baile nacional de Chile?', a: 'La Cueca', alt: ['Tango', 'Samba', 'Marinera'] }
+          ]},
+          { name: 'Colombia', prov: 'América del Sur', icon: '🇨🇴', q: [
+            { q: '¿Cuál es la capital de Colombia?', a: 'Bogotá', alt: ['Medellín', 'Cali', 'Cartagena'] },
+            { q: '¿Qué grano de exportación le da a Colombia fama mundial por su aroma?', a: 'Café Colombiano', alt: ['Cacao', 'Té', 'Soya'] },
+            { q: '¿Qué amurallada ciudad colonial sobre el mar Caribe es ícono turístico?', a: 'Cartagena de Indias', alt: ['Barranquilla', 'Santa Marta', 'Cúcuta'] },
+            { q: '¿Qué masa redonda de maíz asada rellena de queso o carne es típica?', a: 'La Arepa', alt: ['Taco', 'Juane', 'Sushi'] },
+            { q: '¿Qué ritmo tropical con tambores y acordeón nació en la costa colombiana?', a: 'Cumbia y Vallenato', alt: ['Tango', 'Samba', 'Flamenco'] }
+          ]},
+          { name: 'Ecuador', prov: 'América del Sur', icon: '🇪🇨', q: [
+            { q: '¿Cuál es la capital de Ecuador?', a: 'Quito', alt: ['Guayaquil', 'Cuenca', 'Manta'] },
+            { q: '¿Qué archipiélago de islas volcánicas famosas por sus tortugas gigantes pertenece a Ecuador?', a: 'Islas Galápagos', alt: ['Pascua', 'Ballestas', 'Maldivas'] },
+            { q: '¿Por qué línea imaginaria que divide el planeta en dos hemisferios lleva su nombre?', a: 'La Línea Ecuador (Paralelo 0°)', alt: ['Trópico de Cáncer', 'Meridiano de Greenwich', 'Trópico de Capricornio'] },
+            { q: '¿Qué volcán nevado es la cima más alejada del centro de la Tierra en Ecuador?', a: 'Volcán Chimborazo', alt: ['Cotopaxi', 'Misti', 'Everest'] },
+            { q: '¿Qué sombrero fino de paja toquilla artesanal se fabrica en Ecuador?', a: 'Sombrero Panamá (Paja Toquilla)', alt: ['Chullo', 'Sombrero de Charro', 'Boina'] }
+          ]},
+          { name: 'Costa Rica', prov: 'Centroamérica', icon: '🇨🇷', q: [
+            { q: '¿Cuál es la capital de Costa Rica?', a: 'San José', alt: ['Alajuela', 'Cartago', 'Puntarenas'] },
+            { q: '¿Qué frase célebre de saludo y estilo de vida pacífico usan los costarricenses?', a: '¡Pura Vida!', alt: ['¡Che!', '¡Qué padre!', '¡Aloha!'] },
+            { q: '¿Qué animal perezoso y colorido tucán son símbolos de sus bosques protegidos?', a: 'El Oso Perezoso', alt: ['Canguro', 'Panda', 'Pingüino'] },
+            { q: '¿Qué porcentaje aproximado de su territorio está protegido en Parques Nacionales?', a: 'Más del 25%', alt: ['2%', '50%', '80%'] },
+            { q: '¿Qué plato típico de arroz con frijoles negros se consume en el desayuno?', a: 'Gallo Pinto', alt: ['Arepa', 'Taco', 'Juane'] }
+          ]},
+          { name: 'Cuba', prov: 'El Caribe', icon: '🇨🇺', q: [
+            { q: '¿Cuál es la capital de Cuba?', a: 'La Habana', alt: ['Santiago de Cuba', 'Camagüey', 'Varadero'] },
+            { q: '¿Qué estilo musical y baile tropical tradicional con clave nació en Cuba?', a: 'El Son Cubano y la Salsa', alt: ['Tango', 'Samba', 'Flamenco'] },
+            { q: '¿Qué autos antiguos clásicos de los años 50 circulan por las calles de La Habana?', a: 'Almendrones / Carros Clásicos', alt: ['Autos Eléctricos', 'Motos Nieve', 'Carruajes'] },
+            { q: '¿Qué producto agrícola vegetal de hoja enrollada a mano es mundialmente famoso?', a: 'Tabaco / Habano', alt: ['Algodón', 'Café', 'Té'] },
+            { q: '¿Qué playa de arena blanca y mar turquesa es el principal balneario turístico de Cuba?', a: 'Varadero', alt: ['Huanchaco', 'Máncora', 'Cancún'] }
+          ]},
+          { name: 'Guatemala', prov: 'Centroamérica', icon: '🇬🇹', q: [
+            { q: '¿Cuál es la capital de Guatemala?', a: 'Ciudad de Guatemala', alt: ['Antigua', 'Quetzaltenango', 'Flores'] },
+            { q: '¿Qué impresionante sitio arqueológico de la civilización Maya con pirámides está en Tikal?', a: 'Tikal', alt: ['Machu Picchu', 'Chichén Itzá', 'Kuelap'] },
+            { q: '¿Qué hermosa ciudad colonial rodeada de volcanes fue la antigua capital?', a: 'Antigua Guatemala', alt: ['San Salvador', 'Tegucigalpa', 'Managua'] },
+            { q: '¿Qué lago rodeado de pueblos indígenas y volcanes es famoso en Guatemala?', a: 'Lago de Atitlán', alt: ['Titicaca', 'Huacachina', 'Lake Tahoe'] },
+            { q: '¿Qué ave de plumaje verde brillante y pecho rojo es el símbolo nacional y moneda de Guatemala?', a: 'El Quetzal', alt: ['Cóndor', 'Tucán', 'Flamenco'] }
+          ]},
+          { name: 'Panamá', prov: 'Centroamérica', icon: '🇵🇦', q: [
+            { q: '¿Qué gran obra de ingeniería interoceánica une el Océano Atlántico con el Pacífico en Panamá?', a: 'El Canal de Panamá', alt: ['Canal de Suez', 'Canal de Corinto', 'Puente de las Américas'] },
+            { q: '¿Cuál es la capital de Panamá?', a: 'Ciudad de Panamá', alt: ['Colón', 'David', 'Santiago'] },
+            { q: '¿Qué zona rascacielos moderna y casco antiguo histórico caracterizan a su capital?', a: 'El Casco Viejo y la Bahía', alt: ['Manhattan', 'Dubái', 'Tokio'] },
+            { q: '¿Qué moneda oficial utiliza Panamá junto al dólar estadounidense?', a: 'El Balboa', alt: ['Peso', 'Sol', 'Quetzal'] },
+            { q: '¿Qué archipiélago de islas caribeñas es habitado por la etnia Guna Yala?', a: 'San Blas (Guna Yala)', alt: ['Galápagos', 'Margarita', 'Aruba'] }
+          ]},
+          { name: 'México', prov: 'América del Norte', icon: '🇲🇽', q: [
+            { q: '¿Cuál es la capital de México?', a: 'Ciudad de México (CDMX)', alt: ['Guadalajara', 'Monterrey', 'Cancún'] },
+            { q: '¿Qué famosa pirámide Maya es Maravilla del Mundo en Yucatán?', a: 'Chichén Itzá', alt: ['Machu Picchu', 'Tikal', 'Teotihuacán'] },
+            { q: '¿Qué plato popular de tortilla de maíz rellena de carne con salsa es el símbolo del país?', a: 'El Taco', alt: ['Sushi', 'Pizza', 'Arepa'] },
+            { q: '¿Qué música tradicional ranchera cantada con trompetas y guitarrones es mexicana?', a: 'El Mariachi', alt: ['Tango', 'Samba', 'Flamenco'] },
+            { q: '¿Qué festividad tradicional del 1 y 2 de noviembre honra a los antepasados con altares?', a: 'Día de Muertos', alt: ['Halloween', 'San Juan', 'Carnaval'] }
+          ]},
+          { name: 'Estados Unidos', prov: 'América del Norte', icon: '🇺🇸', q: [
+            { q: '¿Cuál es la capital federal de los Estados Unidos?', a: 'Washington D.C.', alt: ['Nueva York', 'Los Ángeles', 'Chicago'] },
+            { q: '¿Qué estatua gigante regalada por Francia se ubica en la bahía de Nueva York?', a: 'Estatua de la Libertad', alt: ['Cristo Redentor', 'Torre Eiffel', 'Big Ben'] },
+            { q: '¿Qué cañón geológico gigante tallado por el río Colorado está en Arizona?', a: 'El Gran Cañón (Grand Canyon)', alt: ['Colca', 'Cotahuasi', 'Boquerón'] },
+            { q: '¿Qué parque nacional fue el primero del mundo famoso por sus géiseres como el Old Faithful?', a: 'Yellowstone', alt: ['Yosemite', 'Manu', 'Huascarán'] },
+            { q: '¿Qué ciudad es el centro mundial de la industria del cine cinematográfico?', a: 'Hollywood (Los Ángeles)', alt: ['Broadway', 'Miami', 'Las Vegas'] }
+          ]},
+          { name: 'Canadá', prov: 'América del Norte', icon: '🇨🇦', q: [
+            { q: '¿Cuál es la capital de Canadá?', a: 'Ottawa', alt: ['Toronto', 'Montreal', 'Vancouver'] },
+            { q: '¿Qué hoja de árbol es el símbolo nacional que aparece en la bandera de Canadá?', a: 'Hoja de Arce (Maple)', alt: ['Hoja de Roble', 'Pino', 'Palmera'] },
+            { q: '¿Qué famosas cataratas gigantes comparte Canadá con los Estados Unidos?', a: 'Cataratas del Niágara', alt: ['Iguazú', 'Victoria', 'Gocta'] },
+            { q: '¿Qué deporte sobre hielo con disco es el deporte nacional de Canadá?', a: 'Hockey sobre Hielo', alt: ['Béisbol', 'Fútbol', 'Rugby'] },
+            { q: '¿Cuáles son los dos idiomas oficiales de Canadá?', a: 'Inglés y Francés', alt: ['Inglés y Español', 'Francés y Alemán', 'Inglés y Holandés'] }
+          ]},
+          { name: 'España', prov: 'Europa', icon: '🇪🇸', q: [
+            { q: '¿Cuál es la capital de España?', a: 'Madrid', alt: ['Barcelona', 'Sevilla', 'Valencia'] },
+            { q: '¿Qué plato a base de arroz, azafrán y mariscos es icónico de España?', a: 'Paella', alt: ['Tacos', 'Pizza', 'Sushi'] },
+            { q: '¿Qué famosa catedral diseñada por el arquitecto Gaudí está en Barcelona?', a: 'Sagrada Familia', alt: ['Notre Dame', 'Big Ben', 'Coliseo'] },
+            { q: '¿Qué baile folclórico tradicional se acompaña con guitarra y castañuelas?', a: 'Flamenco', alt: ['Samba', 'Tango', 'Waltz'] },
+            { q: '¿Qué museo nacional famoso en Madrid alberga obras de Velázquez y Goya?', a: 'Museo del Prado', alt: ['Louvre', 'Hermitage', 'Vaticano'] }
+          ]},
+          { name: 'Francia', prov: 'Europa', icon: '🇫🇷', q: [
+            { q: '¿Cuál es la capital de Francia?', a: 'París', alt: ['Marsella', 'Lyon', 'Niza'] },
+            { q: '¿Qué torre de hierro de 330 metros es el ícono más famoso de París?', a: 'Torre Eiffel', alt: ['Big Ben', 'Torre de Pisa', 'Estatua Libertad'] },
+            { q: '¿Qué museo de arte es el más visitado del mundo y alberga la Mona Lisa?', a: 'Museo del Louvre', alt: ['Prado', 'Vaticano', 'British Museum'] },
+            { q: '¿Qué pan hojaldrado en forma de media luna es tradicional en los desayunos franceses?', a: 'Croissant', alt: ['Baguette', 'Paneton', 'Churro'] },
+            { q: '¿Qué célebre arco de triunfo militar se ubica en la avenida de los Campos Elíseos?', a: 'Arco de Triunfo', alt: ['Puente de las Américas', 'Coliseo', 'Big Ben'] }
+          ]},
+          { name: 'Italia', prov: 'Europa', icon: '🇮🇹', q: [
+            { q: '¿Cuál es la capital de Italia?', a: 'Roma', alt: ['Milán', 'Venecia', 'Florencia'] },
+            { q: '¿Qué antiguo anfiteatro romano de gladiadores es Maravilla del Mundo en Roma?', a: 'El Coliseo Romano', alt: ['Partenón', 'Acrópolis', 'Chichén Itzá'] },
+            { q: '¿Qué platos de gastronomía de masa horneada y pasta son famosos en todo el mundo?', a: 'La Pizza y la Pasta', alt: ['Sushi', 'Tacos', 'Ceviche'] },
+            { q: '¿Qué ciudad construida sobre canates de agua es famosa por sus paseos en góndola?', a: 'Venecia', alt: ['Nápoles', 'Turín', 'Génova'] },
+            { q: '¿Qué famosa torre campanario inclinada se encuentra en la ciudad de Pisa?', a: 'Torre Inclinada de Pisa', alt: ['Torre Eiffel', 'Big Ben', 'Eiffel'] }
+          ]},
+          { name: 'Alemania', prov: 'Europa', icon: '🇩🇪', q: [
+            { q: '¿Cuál es la capital de Alemania?', a: 'Berlín', alt: ['Múnich', 'Fráncfort', 'Hamburgo'] },
+            { q: '¿Qué muro histórico dividido cayó en 1989 simbolizando la reunificación?', a: 'El Muro de Berlín', alt: ['Muralla China', 'Muro de las Lamentaciones', 'Coliseo'] },
+            { q: '¿Qué famosa fiesta folclórica de la cerveza se celebra cada octubre en Múnich?', a: 'Oktoberfest', alt: ['Carnaval', 'San Juan', 'Fiesta de la Cerveza'] },
+            { q: '¿Qué compositores clásicos de música barroca y romántica nacieron en Alemania?', a: 'Beethoven y Bach', alt: ['Mozart y Chopin', 'Vivaldi y Verdi', 'Tchaikovsky'] },
+            { q: '¿Qué castillo de cuento de hadas mandado a construir por Luis II inspiro a Disney?', a: 'Castillo de Neuschwanstein', alt: ['Versalles', 'Alhambra', 'Windsor'] }
+          ]},
+          { name: 'Reino Unido', prov: 'Europa', icon: '🇬🇧', q: [
+            { q: '¿Cuál es la capital del Reino Unido y de Inglaterra?', a: 'Londres', alt: ['Edimburgo', 'Mánchester', 'Liverpool'] },
+            { q: '¿Qué famosa torre con un reloj gigante de cuatro caras está junto al Parlamento en Londres?', a: 'Big Ben (Torre Elizabeth)', alt: ['Torre Eiffel', 'Torre de Pisa', 'Empire State'] },
+            { q: '¿Qué legendaria banda de música rock originaria de Liverpool revolucionó la música en los 60?', a: 'The Beatles', alt: ['Queen', 'Rolling Stones', 'U2'] },
+            { q: '¿Qué monumento megalítico de piedras gigantes en círculo prehistórico está en Inglaterra?', a: 'Stonehenge', alt: ['Partenón', 'Coliseo', 'Kuelap'] },
+            { q: '¿Qué infusión caliente tradicional a las 5 de la tarde es costumbre británica?', a: 'El Té de la Tarde', alt: ['Mate', 'Café', 'Chicha'] }
+          ]},
+          { name: 'Japón', prov: 'Asia', icon: '🇯🇵', q: [
+            { q: '¿Cuál es la capital de Japón?', a: 'Tokio', alt: ['Kioto', 'Osaka', 'Hiroshima'] },
+            { q: '¿Qué imponente volcán de cono perfecto es el símbolo sagrado de Japón?', a: 'Monte Fuji', alt: ['Everest', 'Misti', 'Kilimanjaro'] },
+            { q: '¿Qué plato popular consiste en arroz sazonado acompañado de pescado fresco?', a: 'Sushi', alt: ['Tacos', 'Ramen', 'Paella'] },
+            { q: '¿Cómo se les llamaba a los antiguos guerreros de honor con katana en Japón?', a: 'Samurái', alt: ['Ninja', 'Espartano', 'Gladiador'] },
+            { q: '¿Qué flor de cerezo es muy celebrada durante la primavera en Japón?', a: 'Sakura', alt: ['Orquídea', 'Rosa', 'Girasol'] }
+          ]},
+          { name: 'China', prov: 'Asia', icon: '🇨🇳', q: [
+            { q: '¿Qué gigantesca fortificación de miles de kilómetros de longitud es Maravilla del Mundo en China?', a: 'La Gran Muralla China', alt: ['Muro de Berlín', 'Coliseo', 'Taj Mahal'] },
+            { q: '¿Cuál es la capital de China?', a: 'Pekín (Beijing)', alt: ['Shanghái', 'Hong Kong', 'Cantón'] },
+            { q: '¿Qué animal mamífero blanco y negro de las montañas de bambú es el símbolo de China?', a: 'El Oso Panda', alt: ['Tigre', 'Dragón', 'Koala'] },
+            { q: '¿Qué antiguo complejo imperial de palacios de madera se ubica en el centro de Pekín?', a: 'La Ciudad Prohibida', alt: ['Versalles', 'Alhambra', 'Pachacámac'] },
+            { q: '¿Qué escultura militar de miles de soldados de arcilla a tamaño real se descubrió en Xi\'an?', a: 'Los Guerreros de Terracota', alt: ['Moái', 'Sarcófagos Karajía', 'Sphinx'] }
+          ]},
+          { name: 'India', prov: 'Asia', icon: '🇮🇳', q: [
+            { q: '¿Qué impresionante mausoleo de mármol blanco es Maravilla del Mundo en la ciudad de Agra?', a: 'El Taj Mahal', alt: ['Angkor Wat', 'Petra', 'Coliseo'] },
+            { q: '¿Cuál es la capital de India?', a: 'Nueva Delhi', alt: ['Bombay (Mumbai)', 'Calcuta', 'Bangalore'] },
+            { q: '¿Qué río sagrado para la religión hindú recorre gran parte de India?', a: 'Río Ganges', alt: ['Río Nilo', 'Río Amazonas', 'Río Misisipi'] },
+            { q: '¿Qué líder pacifista usó la resistencia no violenta para lograr la independencia de India?', a: 'Mahatma Gandhi', alt: ['Buda', 'Mandela', 'Confucio'] },
+            { q: '¿Qué animal es considerado sagrado y respetado en las calles de India?', a: 'La Vaca', alt: ['El Elefante', 'El Tigre', 'El Caballo'] }
+          ]},
+          { name: 'Egipto', prov: 'África', icon: '🇪🇬', q: [
+            { q: '¿Qué monumento arqueológico gigante con cuerpo de león y cabeza humana custodia las pirámides?', a: 'La Gran Esfinge de Guiza', alt: ['Estatua de la Libertad', 'Moái', 'Coliseo'] },
+            { q: '¿Qué largo río histórico atraviesa Egipto permitiendo la vida en el desierto?', a: 'Río Nilo', alt: ['Río Amazonas', 'Río Congo', 'Río Misisipi'] },
+            { q: '¿Cuál es la capital de Egipto?', a: 'El Cairo', alt: ['Alejandría', 'Lúxor', 'Asuán'] },
+            { q: '¿Cómo se les llamaba a los antiguos reyes y gobernantes del imperio egipcio?', a: 'Faraones', alt: ['Incas', 'Emperadores', 'Sultanes'] },
+            { q: '¿Qué sistema de escritura antigua con dibujos en papiro utilizaban los egipcios?', a: 'Jeroglíficos', alt: ['Escritura Cuneiforme', 'Alfabeto Griego', 'Runas'] }
+          ]},
+          { name: 'Australia', prov: 'Oceanía', icon: '🇦🇺', q: [
+            { q: '¿Qué marsupial saltador con bolsa abdominal es el animal ícono de Australia?', a: 'El Canguro', alt: ['Koala', 'Panda', 'Capibara'] },
+            { q: '¿Qué famosa construcción arquitectónica en forma de velas blancas está en el puerto de Sídney?', a: 'Ópera de Sídney (Sydney Opera House)', alt: ['Torre Eiffel', 'Big Ben', 'Empire State'] },
+            { q: '¿Cuál es la gran barrera de coral marina visible desde el espacio que bordea Australia?', a: 'Gran Barrera de Coral', alt: ['Arrecife de Belize', 'Paracas', 'Galápagos'] },
+            { q: '¿Cuál es la capital federal de Australia?', a: 'Canberra', alt: ['Sídney', 'Melbourne', 'Brisbane'] },
+            { q: '¿Qué mamífero tierno trepador que come hojas de eucalipto vive en Australia?', a: 'El Koala', alt: ['Oso Perezoso', 'Lémur', 'Capibara'] }
+          ]}
+        ]
+      }
+    };
+
+    function updateNeedBars() {
+      const bh = document.getElementById('bar-hunger');
+      const bt = document.getElementById('bar-thirst');
+      const bc = document.getElementById('bar-cold');
+      const bhe = document.getElementById('bar-heat');
+      if (bh) bh.style.width = `${Math.max(0, Math.min(100, state.needs.hunger))}%`;
+      if (bt) bt.style.width = `${Math.max(0, Math.min(100, state.needs.thirst))}%`;
+      if (bc) bc.style.width = `${Math.max(0, Math.min(100, state.needs.cold))}%`;
+      if (bhe) bhe.style.width = `${Math.max(0, Math.min(100, state.needs.heat))}%`;
+    }
+
+    function decayNeeds() {
+      state.needs.hunger = Math.max(10, state.needs.hunger - 4);
+      state.needs.thirst = Math.max(10, state.needs.thirst - 5);
+      state.needs.cold = Math.max(10, state.needs.cold - 2);
+      state.needs.heat = Math.max(10, state.needs.heat - 2);
+      updateNeedBars();
+    }
+
+    function initAudioContext() {
+      if (!state.audioCtx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) state.audioCtx = new AudioCtx();
+      }
+      if (state.audioCtx && state.audioCtx.state === 'suspended') {
+        state.audioCtx.resume();
+      }
+    }
+
+    function toggleMusic() {
+      initAudioContext();
+      state.isMusicPlaying = !state.isMusicPlaying;
+      const icon = document.getElementById('music-icon');
+      const text = document.getElementById('music-text');
+      if (state.isMusicPlaying) {
+        if (icon) icon.innerText = '🔊';
+        if (text) text.innerText = 'Música ON';
+        startThemedMusic();
+      } else {
+        if (icon) icon.innerText = '🎵';
+        if (text) text.innerText = 'Música OFF';
+        stopBackgroundMusic();
+      }
+    }
+
+    // Sistema de melodías temáticas variables según la región (Selva, Perú o Mundo)
+    function startThemedMusic() {
+      stopBackgroundMusic();
+      if (!state.isMusicPlaying) return;
+
+      let notas = [];
+      let tempo = 400;
+
+      if (state.activeRegion === 'ucayali') {
+        // Melodía tropical alegre (Selva)
+        notas = [330, 392, 440, 523, 440, 392];
+        tempo = 350;
+      } else if (state.activeRegion === 'peru') {
+        // Melodía andina vibrante
+        notas = [261, 329, 392, 523, 493, 392, 329];
+        tempo = 300;
+      } else {
+        // Melodía internacional / misteriosa
+        notas = [220, 247, 293, 349, 392, 349, 293];
+        tempo = 450;
+      }
+
+      let index = 0;
+      state.musicTimer = setInterval(() => {
+        try {
+          if (!state.audioCtx) return;
+          const osc = state.audioCtx.createOscillator();
+          const gain = state.audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(notas[index], state.audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.05, state.audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 0.3);
+          osc.connect(gain);
+          gain.connect(state.audioCtx.destination);
+          osc.start();
+          osc.stop(state.audioCtx.currentTime + 0.3);
+          index = (index + 1) % notas.length;
+        } catch(e) {}
+      }, tempo);
+    }
+
+    function stopBackgroundMusic() {
+      if (state.musicTimer) {
+        clearInterval(state.musicTimer);
+        state.musicTimer = null;
+      }
+    }
+
+    function mostrarYape() {
+      alert("¡Apoya a Capi el Explorador y al creador del juego!\n\nYape directo al número:\n📲 938453331\n\n¡Muchas gracias por tu colaboración!");
+    }
+
+    function checkAnswer(isCorrect) {
+      decayNeeds();
+      const currentCircuit = state.circuits[state.activeRegion];
+      const activeStage = currentCircuit[state.currentStageIndex];
+
+      if (isCorrect) {
+        state.coins += 15;
+        document.getElementById('coin-counter').innerText = state.coins;
+        playSound('correct');
+        triggerLikePopup('¡CORRECTO! +15 🪙');
+
+        if (state.currentQuestionIndex < activeStage.q.length - 1) {
+          state.currentQuestionIndex++;
+          state.shuffledOptions = [];
+          switchTab('trivia');
+        } else {
+          playSound('fanfare');
+          triggerBalloons();
+          if (state.currentStageIndex < currentCircuit.length - 1) {
+            state.currentStageIndex++;
+            state.currentQuestionIndex = 0;
+            state.shuffledOptions = [];
+            switchTab('map');
+          } else {
+            showVictoryModal();
+          }
+        }
+      } else {
+        state.coins = Math.max(0, state.coins - 5);
+        document.getElementById('coin-counter').innerText = state.coins;
+        playSound('wrong');
+        alert('¡Casi! Perdiste 5 monedas. ¡Lee bien la pregunta e inténtalo de nuevo!');
+      }
+    }
+
+    function buyOutfit(key) {
+      const outfit = state.outfits[key];
+      if (!outfit) return;
+      if (state.coins >= outfit.price) {
+        state.coins -= outfit.price;
+        outfit.unlocked = true;
+        document.getElementById('coin-counter').innerText = state.coins;
+        equipOutfit(key);
+      } else {
+        playSound('wrong');
+        alert('¡Te faltan monedas para este traje!');
+      }
+    }
+
+    function equipOutfit(key) {
+      if (state.outfits[key] && state.outfits[key].unlocked) {
+        state.currentOutfit = key;
+        playSound('correct');
+        switchTab('shop');
+      }
+    }
+
+    function getCapibaraSVG() {
+      let accessory = '';
+      if (state.currentOutfit === 'ashaninka') {
+        accessory = `<path d="M 18 12 Q 30 5 42 12" stroke="#4ade80" stroke-width="4" fill="none"/><circle cx="30" cy="7" r="4" fill="#facc15"/>`;
+      } else if (state.currentOutfit === 'andino') {
+        accessory = `<path d="M 15 15 Q 30 8 45 15 L 45 22 L 15 22 Z" fill="#ef4444"/><rect x="25" y="10" width="10" height="5" fill="#facc15"/>`;
+      } else if (state.currentOutfit === 'astronauta') {
+        accessory = `<circle cx="30" cy="22" r="16" fill="rgba(56,189,248,0.3)" stroke="#38bdf8" stroke-width="2"/>`;
+      }
+      return `
+        <svg class="w-10 h-10 capy-glow drop-shadow-md" viewBox="0 0 60 60">
+          <ellipse cx="30" cy="38" rx="20" ry="15" fill="#ab6833"/>
+          <ellipse cx="30" cy="24" rx="14" ry="12" fill="#8d5225"/>
+          <ellipse cx="30" cy="28" rx="8" ry="6" fill="#6d3d17"/>
+          <ellipse cx="30" cy="26" rx="3" ry="2" fill="#2d1706"/>
+          <circle cx="24" cy="21" r="2" fill="#000"/>
+          <circle cx="36" cy="21" r="2" fill="#000"/>
+          <circle cx="16" cy="18" r="3" fill="#6d3d17"/>
+          <circle cx="44" cy="18" r="3" fill="#6d3d17"/>
+          ${accessory}
+        </svg>
+      `;
+    }
+
+    function switchTab(tabName) {
+      const contentEl = document.getElementById('app-content');
+      const tabs = ['map', 'trivia', 'shop'];
+
+      tabs.forEach(t => {
+        const btn = document.getElementById(`nav-${t}`);
+        if (btn) {
+          if (t === tabName) {
+            btn.className = "flex-1 py-1.5 rounded-xl font-black text-xs flex flex-col items-center gap-0.5 transition bg-emerald-600 text-white shadow-xs";
+          } else {
+            btn.className = "flex-1 py-1.5 rounded-xl font-black text-xs flex flex-col items-center gap-0.5 transition text-emerald-900 hover:bg-emerald-100";
+          }
+        }
+      });
+
+      if (tabName === 'map') contentEl.innerHTML = renderMapScreen();
+      else if (tabName === 'trivia') contentEl.innerHTML = renderTriviaScreen();
+      else if (tabName === 'shop') contentEl.innerHTML = renderShopScreen();
+    }
+
+    function changeRegion(region) {
+      state.activeRegion = region;
+      state.currentStageIndex = 0;
+      state.currentQuestionIndex = 0;
+      state.shuffledOptions = [];
+      if (state.isMusicPlaying) startThemedMusic();
+      switchTab('map');
+    }
+
+    function renderMapScreen() {
+      const currentCircuit = state.circuits[state.activeRegion];
+      return `
+        <div class="h-full p-2 bg-gradient-to-b from-emerald-100 to-amber-50 flex flex-col justify-between overflow-y-auto">
+          <div class="flex items-center justify-center gap-1 bg-white/90 p-1 rounded-2xl shadow-xs border border-emerald-300 shrink-0">
+            <button onclick="changeRegion('ucayali')" class="px-2 py-1 rounded-xl font-black text-[11px] ${state.activeRegion === 'ucayali' ? 'bg-emerald-600 text-white shadow-xs' : 'text-emerald-900 hover:bg-emerald-100'}">
+              🌿 Ucayali
+            </button>
+            <button onclick="changeRegion('peru')" class="px-2 py-1 rounded-xl font-black text-[11px] ${state.activeRegion === 'peru' ? 'bg-emerald-600 text-white shadow-xs' : 'text-emerald-900 hover:bg-emerald-100'}">
+              🇵🇪 Perú
+            </button>
+            <button onclick="changeRegion('mundo')" class="px-2 py-1 rounded-xl font-black text-[11px] ${state.activeRegion === 'mundo' ? 'bg-emerald-600 text-white shadow-xs' : 'text-emerald-900 hover:bg-emerald-100'}">
+              🌎 Mundo
+            </button>
+          </div>
+
+          <div class="my-2 relative flex-1 flex flex-col items-center justify-start bg-emerald-800/10 rounded-2xl border-2 border-dashed border-emerald-400/50 p-2 overflow-y-auto space-y-2">
+            ${currentCircuit.map((stage, idx) => {
+              const isCurrent = idx === state.currentStageIndex;
+              const isPassed = idx < state.currentStageIndex;
+              return `
+                <div onclick="selectStage(${idx})" class="w-full cursor-pointer p-2 rounded-2xl transition border-2 flex items-center justify-between ${isCurrent ? 'bg-amber-300 border-amber-500 shadow-md scale-102' : isPassed ? 'bg-emerald-200 border-emerald-400 opacity-90' : 'bg-white border-slate-300 opacity-75'}">
+                  <div class="flex items-center gap-2">
+                    <span class="text-2xl">${stage.icon}</span>
+                    <div>
+                      <div class="font-black text-xs text-slate-900 leading-tight">${stage.name}</div>
+                      <div class="text-[9px] font-bold text-slate-600">${stage.prov}</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    ${isCurrent ? `
+                      <div class="flex items-center gap-1 bg-emerald-700 text-white px-2 py-0.5 rounded-full text-[10px] font-black animate-pulse">
+                        <span>Aquí</span>
+                        ${getCapibaraSVG()}
+                      </div>
+                    ` : isPassed ? `
+                      <span class="text-emerald-700 text-xs font-black">✓ OK</span>
+                    ` : `
+                      <span class="text-slate-400 text-xs">🔒</span>
+                    `}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <button onclick="switchTab('trivia')" class="w-full bg-amber-400 hover:bg-amber-500 text-amber-950 font-black py-2 rounded-xl text-xs shadow-md border border-amber-500 shrink-0 uppercase tracking-wider">
+            ¡Entrar a la Trivia de ${currentCircuit[state.currentStageIndex].name}! 🚀
+          </button>
+        </div>
+      `;
+    }
+
+    function selectStage(index) {
+      if (index <= state.currentStageIndex) {
+        state.currentStageIndex = index;
+        state.currentQuestionIndex = 0;
+        state.shuffledOptions = [];
+        switchTab('trivia');
+      } else {
+        alert('¡Responde las trivias anteriores para desbloquear esta parada!');
+      }
+    }
+
+    function renderTriviaScreen() {
+      const currentCircuit = state.circuits[state.activeRegion];
+      const activeStage = currentCircuit[state.currentStageIndex];
+      const currentQuestion = activeStage.q[state.currentQuestionIndex];
+
+      if (!state.shuffledOptions || state.shuffledOptions.length === 0) {
+        const allOpts = [
+          { text: currentQuestion.a, isCorrect: true },
+          ...currentQuestion.alt.map(alt => ({ text: alt, isCorrect: false }))
+        ];
+        state.shuffledOptions = allOpts.sort(() => Math.random() - 0.5);
+      }
+
+      const labels = ['A', 'B', 'C', 'D'];
+
+      return `
+        <div class="h-full p-2 bg-gradient-to-b from-amber-50 to-emerald-100 flex flex-col justify-between overflow-y-auto">
+          <div class="bg-white border-2 border-emerald-500 rounded-2xl p-2 shadow-xs flex items-center gap-2 shrink-0">
+            <div class="shrink-0">${getCapibaraSVG()}</div>
+            <div class="flex-1">
+              <div class="font-black text-xs text-emerald-900">${activeStage.name} (${activeStage.prov})</div>
+              <div class="text-[11px] font-semibold text-slate-700 leading-tight">Pregunta ${state.currentQuestionIndex + 1} de 5</div>
+            </div>
+          </div>
+
+          <div class="bg-white/95 border-2 border-emerald-400 rounded-2xl p-3 shadow-md my-1 flex-1 flex flex-col justify-around">
+            <p class="text-sm sm:text-base font-black text-slate-900 leading-snug text-center">
+              ${currentQuestion.q}
+            </p>
+
+            <div class="grid grid-cols-1 gap-1.5 mt-2">
+              ${state.shuffledOptions.map((opt, idx) => `
+                <button onclick="checkAnswer(${opt.isCorrect})" class="w-full text-left bg-slate-50 hover:bg-amber-100 border-2 border-slate-200 hover:border-amber-400 rounded-xl p-2.5 flex items-center gap-2 transition active:scale-98">
+                  <span class="w-7 h-7 rounded-lg bg-emerald-600 text-white font-black text-xs flex items-center justify-center shrink-0">${labels[idx]}</span>
+                  <span class="text-xs sm:text-sm font-bold text-slate-800 leading-tight">${opt.text}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function playSound(type) {
+      try {
+        initAudioContext();
+        if (!state.audioCtx) return;
+        const osc = state.audioCtx.createOscillator();
+        const gain = state.audioCtx.createGain();
+
+        if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, state.audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, state.audioCtx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.15, state.audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, state.audioCtx.currentTime + 0.25);
+          osc.connect(gain);
+          gain.connect(state.audioCtx.destination);
+          osc.start();
+          osc.stop(state.audioCtx.currentTime + 0.25);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, state.audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(110, state.audioCtx.currentTime + 0.3);
+          gain.gain.setValueAtTime(0.15, state.audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, state.audioCtx.currentTime + 0.35);
+          osc.connect(gain);
+          gain.connect(state.audioCtx.destination);
+          osc.start();
+          osc.stop(state.audioCtx.currentTime + 0.35);
+        } else if (type === 'fanfare') {
+          const now = state.audioCtx.currentTime;
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, i) => {
+            const o = state.audioCtx.createOscillator();
+            const g = state.audioCtx.createGain();
+            o.type = 'triangle';
+            o.frequency.setValueAtTime(freq, now + i * 0.1);
+            g.gain.setValueAtTime(0.12, now + i * 0.1);
+            g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.25);
+            o.connect(g);
+            g.connect(state.audioCtx.destination);
+            o.start(now + i * 0.1);
+            o.stop(now + i * 0.1 + 0.25);
+          });
+        }
+      } catch (e) {}
+    }
+
+    function triggerLikePopup(text) {
+      const popup = document.getElementById('like-popup');
+      const textEl = document.getElementById('like-text');
+      if (popup && textEl) {
+        textEl.innerText = text;
+        popup.classList.remove('hidden');
+        setTimeout(() => { popup.classList.add('hidden'); }, 1400);
+      }
+    }
+
+    function triggerBalloons() {
+      const container = document.getElementById('balloon-container');
+      if (!container) return;
+      const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+      for (let i = 0; i < 15; i++) {
+        const balloon = document.createElement('div');
+        balloon.className = 'balloon';
+        balloon.style.left = `${Math.random() * 90}%`;
+        balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        balloon.style.width = '30px';
+        balloon.style.height = '40px';
+        balloon.style.borderRadius = '50% 50% 50% 50% / 40% 40% 60% 60%';
+        container.appendChild(balloon);
+        setTimeout(() => balloon.remove(), 3500);
+      }
+    }
+
+    function showVictoryModal() {
+      document.getElementById('victory-modal').classList.remove('hidden');
+    }
+
+    function closeVictoryModal() {
+      document.getElementById('victory-modal').classList.add('hidden');
+      if (state.activeRegion === 'ucayali') changeRegion('peru');
+      else if (state.activeRegion === 'peru') changeRegion('mundo');
+      else switchTab('map');
+    }
+
+    function renderShopScreen() {
+      return `
+        <div class="h-full p-2 bg-gradient-to-b from-amber-50 to-emerald-50 flex flex-col justify-between overflow-y-auto">
+          <div class="bg-amber-400 text-amber-950 rounded-xl p-2 shadow border border-amber-500 text-center shrink-0">
+            <h2 class="font-black text-sm">🛍️ TIENDA Y CUIDADO DEL CAPIBARA</h2>
+            <p class="text-[11px] font-bold">Usa tus monedas ganadas para cuidar a Capi</p>
+          </div>
+
+          <div class="my-2 flex-1 overflow-y-auto space-y-2">
+            <div class="font-black text-xs text-emerald-900">🍌 Alimentos y Refrescos</div>
+            <div class="grid grid-cols-2 gap-2">
+              ${state.shopItems.map(item => `
+                <div class="bg-white border-2 border-emerald-300 rounded-2xl p-2 flex flex-col items-center justify-between text-center shadow-xs">
+                  <div class="text-3xl">${item.icon}</div>
+                  <div class="font-black text-xs text-slate-900 leading-tight">${item.name}</div>
+                  <div class="text-[10px] text-amber-700 font-bold">🪙 ${item.price}</div>
+                  <button onclick="buyItem('${item.id}')" class="w-full mt-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] py-1 rounded-lg">
+                    COMPRAR
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="font-black text-xs text-emerald-900 pt-2">👑 Vestimentas</div>
+            <div class="grid grid-cols-2 gap-2">
+              ${Object.keys(state.outfits).map(key => {
+                const item = state.outfits[key];
+                const isEquipped = state.currentOutfit === key;
+                return `
+                  <div class="bg-white border-2 ${isEquipped ? 'border-amber-500 bg-amber-50' : 'border-slate-200'} rounded-2xl p-2 flex flex-col items-center justify-between text-center shadow-xs">
+                    <div class="text-3xl my-1">${item.icon}</div>
+                    <div class="font-black text-xs text-slate-900 leading-tight">${item.name}</div>
+                    <div class="text-[10px] text-amber-700 font-bold">${item.price > 0 ? `🪙 ${item.price}` : 'Gratis'}</div>
+                    ${isEquipped ? `
+                      <button class="w-full mt-1 bg-amber-500 text-white font-black text-[10px] py-1 rounded-lg">PUESTO</button>
+                    ` : item.unlocked ? `
+                      <button onclick="equipOutfit('${key}')" class="w-full mt-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] py-1 rounded-lg">USAR</button>
+                    ` : `
+                      <button onclick="buyOutfit('${key}')" class="w-full mt-1 bg-amber-400 hover:bg-amber-500 text-amber-950 font-black text-[10px] py-1 rounded-lg">COMPRAR</button>
+                    `}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function buyItem(itemId) {
+      const item = state.shopItems.find(i => i.id === itemId);
+      if (!item) return;
+
+      if (state.coins >= item.price) {
+        state.coins -= item.price;
+        state.needs[item.stat] = Math.min(100, state.needs[item.stat] + item.amount);
+        document.getElementById('coin-counter').innerText = state.coins;
+        updateNeedBars();
+        playSound('correct');
+        triggerLikePopup(item.msg);
+      } else {
+        playSound('wrong');
+        alert('¡Te faltan monedas! Responde trivias para conseguir más.');
+      }
+    }
+
+function mostrarYape() {
+      alert("¡Apoya a Capi el Explorador y al creador del juego!\n\nYape directo al número:\n📲 938453331\n\n¡Muchas gracias por tu colaboración!");
+    }
+
+function cerrarIntroCapi() {
+      const modal = document.getElementById('capi-intro-modal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    window.onload = function() {
+      updateNeedBars();
+      switchTab('map');
+    };
+    </script>
+</body>
+</html>
